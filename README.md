@@ -8,11 +8,11 @@ team number : 7
 
 team numbers :
          
-         B. J. V SAI VASANTH - CB.EN.U4CSE21213
+         B. J. V SAI VASANTH  - CB.EN.U4CSE21213
          
-         M DEEPAK SAI        - CB.EN.U4CSE21240
+         MUKKAPATI DEEPAK SAI - CB.EN.U4CSE21240
          
-         D JAHNAVI           - CB.EN.U4CSE21216
+         DANAM JAHNAVI        - CB.EN.U4CSE21216
          
  Tthis web site includes the process schedulings
  
