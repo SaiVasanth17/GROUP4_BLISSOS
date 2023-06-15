@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ROUND ROBIN SCHEDULING</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #f2f2f2;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    form {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+      margin: 20px auto;
+      max-width: 800px;
+      padding: 20px;
+    }
+    form label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    form input[type="number"] {
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 16px;
+      padding: 8px;
+      width: 100px;
+      margin-bottom: 10px;
+    }
+    form input[type="submit"] {
+      background-color: #4CAF50;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 20px auto;
+      max-width: 800px;
+      width: 100%;
+    }
+    table th, table td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    table th {
+      background-color: #f2f2f2;
+    }
+    table tbody tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    button
+    {
+      background-color: #4CAF50;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 10px;
+      margin-left: 800px;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Round Robin Scheduling Calculator</h1>
+  
+  <form id="rrForm">
+    <label for="n">Number of Processes:</label>
+    <input type="number" id="n" name="n" min="1" max="10" required>
+    
+    <div id="inputsDiv"></div>
+    
+    <label for="timeQuantum">Time Quantum:</label>
+    <input type="number" id="timeQuantum" name="timeQuantum" min="1" max="10" required>
+    
+    <input type="submit" value="Calculate"><br>
+    
+  </form>
+  <a href="home.html"><button>Home</button></a>
+  <div id="outputDiv"></div>
+  
+  <script>
+    const form = document.getElementById("rrForm");
+    const inputsDiv = document.getElementById("inputsDiv");
+    const outputDiv = document.getElementById("outputDiv");
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const n = parseInt(this.elements.n.value);
+      const arrivalTimes = [];
+      const burstTimes = [];
+      const completionTimes = [];
+      const turnaroundTimes = [];
+      const waitingTimes = [];
+      const timeQuantum = parseInt(this.elements.timeQuantum.value);
+
+      for (let i = 0; i < n; i++) {
+        arrivalTimes[i] = parseInt(this.elements[`arrivalTime${i}`].value);
+        burstTimes[i] = parseInt(this.elements[`burstTime${i}`].value);
+        completionTimes[i] = 0;
+        turnaroundTimes[i] = 0;
+        waitingTimes[i] = 0;
+    }
+
+  let time = 0;
+  let remainingTimes = burstTimes.slice();
+
+  while (true) {
+    let done = true;
+
+    for (let i = 0; i < n; i++) {
+      if (remainingTimes[i] > 0) {
+        done = false;
+
+        if (remainingTimes[i] <= timeQuantum) {
+          time += remainingTimes[i];
+          completionTimes[i] = time;
+          remainingTimes[i] = 0;
+        } else {
+          time += timeQuantum;
+          remainingTimes[i] -= timeQuantum;
+        }
+      }
+    }
+
+    if (done) {
+      break;
+    }
+  }
+
+  for (let i = 0; i < n; i++) {
+    turnaroundTimes[i] = completionTimes[i] - arrivalTimes[i];
+    waitingTimes[i] = turnaroundTimes[i] - burstTimes[i];
+  }
+
+  let output = "<h2>Output:</h2>";
+  output += "<table>";
+  output += "<thead>";
+  output += "<tr>";
+  output += "<th>Process</th>";
+  output += "<th>Arrival Time</th>";
+  output += "<th>Burst Time</th>";
+  output += "<th>Completion Time</th>";
+  output += "<th>Turnaround Time</th>";
+  output += "<th>Waiting Time</th>";
+  output += "</tr>";
+  output += "</thead>";
+  output += "<tbody>";
+
+  for (let i = 0; i < n; i++) {
+    output += "<tr>";
+    output += `<td>P${i}</td>`;
+    output += `<td>${arrivalTimes[i]}</td>`;
+    output += `<td>${burstTimes[i]}</td>`;
+    output += `<td>${completionTimes[i]}</td>`;
+    output += `<td>${turnaroundTimes[i]}</td>`;
+    output += `<td>${waitingTimes[i]}</td>`;
+    output += "</tr>";
+  }
+
+  output += "</tbody>";
+  output += "</table>";
+
+  outputDiv.innerHTML = output;
+});
+
+const nInput = document.getElementById("n");
+
+nInput.addEventListener("input", function(event) {
+  const n = parseInt(this.value);
+  let inputs = "";
+
+  for (let i = 0; i < n; i++) {
+    inputs += `<label for="arrivalTime${i}">Arrival Time for P${i}:</label>`;
+    inputs += `<input type="number" id="arrivalTime${i}" name="arrivalTime${i}" min="0" max="10" required>`;
+    inputs += `<label for="burstTime${i}">Burst Time for P${i}:</label>`;
+    inputs += `<input type="number" id="burstTime${i}" name="burstTime${i}" min="1" max="10" required>`;
+  }
+
+  inputsDiv.innerHTML = inputs;
+});
+</script>
+</body>
+</html>
